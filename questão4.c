@@ -2,8 +2,30 @@
 #include <stdlib.h>
 #include <time.h>
 
-void mergesort(int n, int v[]); // Usada da Q3
+// Implementação completa do Merge Sort necessária para a questão
+void intercala(int a[], int na, int b[], int nb, int c[]) {
+    int i = 0, j = 0, k = 0;
+    while (i < na && j < nb) {
+        if (a[i] <= b[j]) c[k++] = a[i++];
+        else c[k++] = b[j++];
+    }
+    while (i < na) c[k++] = a[i++];
+    while (j < nb) c[k++] = b[j++];
+}
 
+void mergesort(int n, int v[]) {
+    if (n < 2) return;
+    int meio = n / 2;
+    mergesort(meio, v);
+    mergesort(n - meio, v + meio);
+    
+    int *w = (int*) malloc(n * sizeof(int));
+    intercala(v, meio, v + meio, n - meio, w);
+    for (int i = 0; i < n; i++) v[i] = w[i];
+    free(w);
+}
+
+// Solução 1: Ordenando primeiro O(n log n)
 void calcular_distintos_e_moda_ordenado(int n, int v[]) {
     mergesort(n, v);
     int distintos = 1;
@@ -29,6 +51,7 @@ void calcular_distintos_e_moda_ordenado(int n, int v[]) {
     printf("[Ordenado O(n log n)] Distintos: %d | Moda: %d (%d vezes)\n", distintos, moda, max_freq);
 }
 
+// Solução 2: Ingênua com 2 laços O(n^2)
 void calcular_distintos_e_moda_ingenuo(int n, int v[]) {
     int distintos = 0;
     int moda = v[0], max_freq = 0;
@@ -53,10 +76,11 @@ void calcular_distintos_e_moda_ingenuo(int n, int v[]) {
 }
 
 int main() {
-    int n = 10000; // Testar com 10000 e 100000
+    int n = 10000;
     int *v1 = (int*) malloc(n * sizeof(int));
     int *v2 = (int*) malloc(n * sizeof(int));
 
+    srand(time(NULL));
     for (int i = 0; i < n; i++) {
         v1[i] = rand() % 1000;
         v2[i] = v1[i];
